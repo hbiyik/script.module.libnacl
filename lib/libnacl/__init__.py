@@ -11,7 +11,7 @@ import sys
 import abi
 import os
 
-abi.include("script.module.libnacl")
+mdll = abi.load("script.module.libnacl", "libsodium", None, True, True)
 
 __SONAMES = (18, 17, 13, 10, 5, 4)
 
@@ -23,7 +23,7 @@ def _get_nacl():
     # Import libsodium
     if sys.platform.startswith('win'):
         try:
-            return ctypes.cdll.LoadLibrary('libsodium')
+            return mdll
         except OSError:
             pass
         for soname_ver in __SONAMES:
@@ -37,7 +37,7 @@ def _get_nacl():
         raise OSError(msg)
     elif sys.platform.startswith('darwin'):
         try:
-            return ctypes.cdll.LoadLibrary('libsodium.dylib')
+            return mdll
         except OSError:
             pass
         try:
@@ -50,7 +50,7 @@ def _get_nacl():
             raise OSError(msg)
     else:
         try:
-            return ctypes.cdll.LoadLibrary(os.path.join(abi._get_path("script.module.libnacl", True, True), 'libsodium.so'))
+            return mdll
         except OSError:
             pass
         try:
